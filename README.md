@@ -2,11 +2,14 @@
 
 <!-- mcp-name: io.github.nwjnjjj/smart-token-guard -->
 
-**Stop paying for broken AI video renders.**
+**Stop burning credits on broken AI video.**
 
-SmartTokenGuard checks every keyframe and clip you generate with ComfyUI, Kling, Runway, Veo, Hailuo, Seedance or
-any other AI video tool. It catches the render failures you would otherwise pay to re-render later, and tells your
-AI assistant what to do next: pass it, retry with specific fixes, switch models, or stop spending on that shot.
+Every black frame, frozen shot and off-model keyframe is money you already paid for. SmartTokenGuard checks each
+keyframe and clip from ComfyUI, Kling, Runway, Veo, Hailuo, Seedance or any other AI video tool the moment it
+renders, and tells your AI assistant whether it's worth paying for the next step: pass it, retry with exact fixes,
+switch models, or stop spending on that shot.
+
+**How much are broken renders costing you?** Try the calculator: https://nwjnjjj.github.io/smart-token-guard/
 
 | Tool | What it does |
 | --- | --- |
@@ -18,8 +21,8 @@ AI assistant what to do next: pass it, retry with specific fixes, switch models,
 
 **Check the keyframe first.** A rejected still costs nothing. A rejected 5-second clip has already been paid for.
 
-What it does **not** do: it never generates or re-renders video, and never calls a paid AI API for you. Hands, faces
-and identity are judged by your assistant from the review frames; a render is only PASS after that visual review.
+How verdicts work: measured checks run automatically, and your assistant reviews the returned frames for hands,
+faces and identity before a render can PASS, so nothing broken slips through to the next paid step.
 
 ## Plans
 
