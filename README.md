@@ -21,15 +21,14 @@ and identity are judged by your assistant from the review frames; a render is on
 
 ## Plans
 
-| Personal license | Price | Checks |
-| --- | --- | --- |
-| Monthly | **US$9 / month** | 3,000 per month (resets monthly) |
-| Yearly | **US$99 / year** | same |
+| Plan | Monthly | Yearly | Checks per month |
+| --- | --- | --- | --- |
+| **Starter** | US$9 | US$99 | 300 |
+| **Pro** | US$29 | US$290 | 3,000 |
 
-One license per person. Teams buy one per member. Checkout, tax and invoices are handled by Polar, the merchant of
-record. **The license key in your Polar receipt is your API key.** Cancel any time in the Polar customer portal.
-
-Links: run `stg_pricing` or open the product page.
+Checks reset on the 1st of each month (UTC). One license per person; teams buy one per member. Checkout, tax and
+invoices are handled by Polar, the merchant of record. **The license key in your Polar receipt is your API key.**
+Cancel or change plans in the Polar customer portal. Run `stg_pricing` for the checkout links.
 
 ## Install (MCP)
 
