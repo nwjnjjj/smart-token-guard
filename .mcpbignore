@@ -1,0 +1,7 @@
+.git/
+.venv/
+dist/
+docs/
+__pycache__/
+*.mcpb
+.gitignore

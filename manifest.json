@@ -1,0 +1,40 @@
+{
+  "manifest_version": "0.4",
+  "name": "smart-token-guard",
+  "display_name": "SmartTokenGuard",
+  "version": "1.2.0",
+  "description": "Stop paying for broken AI video renders: QA checks and PASS/RETRY/SWITCH/HALT decisions for AI video.",
+  "long_description": "Checks keyframes and clips from ComfyUI, Kling, Runway, Veo, Hailuo, Seedance and other AI video tools for blur, exposure, black or frozen frames, flicker, cuts, impacts and look drift. Returns review frames for your assistant to check hands, faces and identity, then decides PASS / RETRY_SAME_MODEL / SWITCH_TO_FALLBACK / HALT with concrete fixes and a local spend ledger. Analysis runs on the SmartTokenGuard API; requires a Starter (US$9/mo, 300 checks) or Pro (US$29/mo, 3,000 checks) subscription.",
+  "author": { "name": "SmartTokenGuard", "url": "https://nwjnjjj.github.io/smart-token-guard/" },
+  "homepage": "https://nwjnjjj.github.io/smart-token-guard/",
+  "repository": { "type": "git", "url": "https://github.com/nwjnjjj/smart-token-guard" },
+  "server": {
+    "type": "uv",
+    "entry_point": "mcpb_entry.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": ["run", "--directory", "${__dirname}", "mcpb_entry.py"],
+      "env": { "STG_LICENSE_KEY": "${user_config.license_key}" }
+    }
+  },
+  "user_config": {
+    "license_key": {
+      "type": "string",
+      "title": "License key",
+      "description": "The license key from your Polar receipt (Starter or Pro). Get one at https://nwjnjjj.github.io/smart-token-guard/",
+      "sensitive": true,
+      "required": true
+    }
+  },
+  "tools": [
+    { "name": "stg_pricing", "description": "Plans, prices and checkout links" },
+    { "name": "stg_account", "description": "Plan, checks used and checks remaining" },
+    { "name": "stg_inspect_render", "description": "Measure an image or video render and return review frames" },
+    { "name": "stg_detect_events", "description": "Impacts, flashes and cuts with exact frame times" },
+    { "name": "stg_qa_gate", "description": "PASS / RETRY / SWITCH_TO_FALLBACK / HALT decision with spend ledger" },
+    { "name": "stg_spend_report", "description": "What a project spent, attempts per shot, renders rejected" }
+  ],
+  "compatibility": { "platforms": ["darwin", "linux", "win32"], "runtimes": { "python": ">=3.10" } },
+  "keywords": ["ai-video", "comfyui", "kling", "runway", "veo", "qa", "mcp"],
+  "license": "MIT"
+}

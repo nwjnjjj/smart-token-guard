@@ -1,5 +1,7 @@
 # SmartTokenGuard
 
+<!-- mcp-name: io.github.nwjnjjj/smart-token-guard -->
+
 **Stop paying for broken AI video renders.**
 
 SmartTokenGuard checks every keyframe and clip you generate with ComfyUI, Kling, Runway, Veo, Hailuo, Seedance or
