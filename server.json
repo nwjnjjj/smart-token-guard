@@ -4,19 +4,39 @@
   "title": "SmartTokenGuard",
   "description": "Stop paying for broken AI video renders: QA checks and PASS/RETRY/SWITCH/HALT decisions. Paid plans.",
   "websiteUrl": "https://nwjnjjj.github.io/smart-token-guard/",
-  "repository": { "url": "https://github.com/nwjnjjj/smart-token-guard", "source": "github" },
-  "version": "1.2.0",
+  "repository": {
+    "url": "https://github.com/nwjnjjj/smart-token-guard",
+    "source": "github"
+  },
+  "version": "1.2.1",
   "packages": [
     {
       "registryType": "mcpb",
       "identifier": "https://github.com/nwjnjjj/smart-token-guard/releases/download/v1.2.0/smart-token-guard-1.2.0.mcpb",
       "version": "1.2.0",
       "fileSha256": "6ba56ae21c0f0569f94164b9fb695ffa58a6fd33762a9d87eb79edd1d9a4d6bf",
-      "transport": { "type": "stdio" },
+      "transport": {
+        "type": "stdio"
+      },
       "environmentVariables": [
         {
           "name": "STG_LICENSE_KEY",
           "description": "License key from your Polar receipt (Starter or Pro plan).",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://stg-agent-560636228350.asia-east1.run.app/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Bearer <license key from your Polar receipt>",
           "isRequired": true,
           "isSecret": true,
           "format": "string"

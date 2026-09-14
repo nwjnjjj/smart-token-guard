@@ -82,6 +82,17 @@ print(decision["decision"], decision["actions"])
 HTTP API: `POST /v1/inspect` (multipart `file`, optional `reference`, `options` JSON), `POST /v1/qa-gate`,
 `GET /v1/account` with `Authorization: Bearer <license key>`. See `GET /v1/capabilities`.
 
+## For AI agents (remote MCP and A2A)
+
+No install needed. Media is passed as a public https URL; the server downloads it, analyses it and deletes it.
+
+- **Remote MCP (Streamable HTTP):** `https://stg-agent-560636228350.asia-east1.run.app/mcp` with header
+  `Authorization: Bearer <license key>`. Tools: `stg_inspect_media_url`, `stg_qa_gate`, `stg_account`, `stg_pricing`.
+- **A2A:** Agent Card at `https://stg-agent-560636228350.asia-east1.run.app/.well-known/agent-card.json`, JSON-RPC
+  `message/send` at `/a2a`. Send a data part `{"media_url": "https://..."}` (or text containing a link) to inspect,
+  or `{"skill": "qa-gate", ...}` for a decision.
+- Same plans and monthly checks as above. URLs must be public https hosts; private and internal addresses are refused.
+
 ## Limits and privacy
 
 - Up to 32 MB, 60 seconds and 1080p per file (JPEG, PNG, WebP, MP4, MOV, WebM, MKV). 30 requests per minute.
