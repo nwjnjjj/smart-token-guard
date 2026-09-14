@@ -2,19 +2,19 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.nwjnjjj/smart-token-guard",
   "title": "SmartTokenGuard",
-  "description": "Stop paying for broken AI video renders: QA checks and PASS/RETRY/SWITCH/HALT decisions. Paid plans.",
+  "description": "Stop burning credits on broken AI video: check every render before you pay for the next one.",
   "websiteUrl": "https://nwjnjjj.github.io/smart-token-guard/",
   "repository": {
     "url": "https://github.com/nwjnjjj/smart-token-guard",
     "source": "github"
   },
-  "version": "1.2.1",
+  "version": "1.2.2",
   "packages": [
     {
       "registryType": "mcpb",
-      "identifier": "https://github.com/nwjnjjj/smart-token-guard/releases/download/v1.2.0/smart-token-guard-1.2.0.mcpb",
-      "version": "1.2.0",
-      "fileSha256": "6ba56ae21c0f0569f94164b9fb695ffa58a6fd33762a9d87eb79edd1d9a4d6bf",
+      "identifier": "https://github.com/nwjnjjj/smart-token-guard/releases/download/v1.2.2/smart-token-guard-1.2.2.mcpb",
+      "version": "1.2.2",
+      "fileSha256": "37939af2c93120ec88f0686b7e5b37672b3a465b52a6790981dcc676c762133e",
       "transport": {
         "type": "stdio"
       },

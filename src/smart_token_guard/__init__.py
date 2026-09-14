@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional
 
 import httpx
 
-__version__ = "1.2.0"
+__version__ = "1.2.2"
 __all__ = ["Client", "STGError", "DEFAULT_API_URL"]
 
 DEFAULT_API_URL = "https://stg-api-560636228350.asia-east1.run.app"

@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "smart-token-guard"
 dynamic = ["version"]
-description = "Stop paying for broken AI video renders: QA gate for ComfyUI, Kling, Runway, Veo and other AI video (MCP server + Python SDK)."
+description = "Stop burning credits on broken AI video: check every keyframe and clip before you pay for the next render (MCP server + Python SDK)."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
