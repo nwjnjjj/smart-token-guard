@@ -3,37 +3,52 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SmartTokenGuard — stop paying for broken AI video renders</title>
-<meta name="description" content="QA gate for AI video: catches blur, flicker, frozen frames, black frames and look drift before you pay for the next render. MCP server for Claude, Cursor and VS Code, plus a Python SDK.">
+<title>SmartTokenGuard — stop burning credits on broken AI video</title>
+<meta name="description" content="Catch broken AI video renders before you pay for the next step. SmartTokenGuard checks every keyframe and clip and tells you to pass, retry with exact fixes, switch models or stop spending. Works with ComfyUI, Kling, Runway, Veo and AI agents.">
+<meta property="og:title" content="Stop burning credits on broken AI video">
+<meta property="og:description" content="Check every keyframe and clip before you pay for the next render.">
 <style>
   :root { --bg:#0d0f12; --panel:#15181d; --line:#262b33; --text:#e9ecf1; --muted:#9aa3ae; --accent:#ffb020; --ok:#3ecf8e; --bad:#ff5d5d; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; padding-inline:20px; }
-  main { max-width:960px; margin:0 auto; }
-  header { padding-block:72px 40px; }
-  .tag { color:var(--accent); font-weight:600; letter-spacing:.04em; font-size:14px; text-transform:uppercase; }
-  h1 { font-size:clamp(34px,6vw,56px); line-height:1.08; margin:14px 0 18px; letter-spacing:-.02em; }
-  h2 { font-size:28px; margin:0 0 18px; letter-spacing:-.01em; }
-  .lead { color:var(--muted); font-size:19px; max-width:680px; }
-  .cta { display:flex; gap:12px; flex-wrap:wrap; margin-top:28px; }
-  .btn { display:inline-block; padding:13px 22px; border-radius:10px; font-weight:600; text-decoration:none; border:1px solid var(--line); color:var(--text); }
+  main { max-width:980px; margin:0 auto; }
+  header { padding-block:76px 44px; }
+  .tag { color:var(--accent); font-weight:600; letter-spacing:.05em; font-size:14px; text-transform:uppercase; }
+  h1 { font-size:clamp(36px,6.4vw,62px); line-height:1.05; margin:14px 0 20px; letter-spacing:-.025em; }
+  h1 em { font-style:normal; color:var(--accent); }
+  h2 { font-size:clamp(26px,4vw,34px); margin:0 0 10px; letter-spacing:-.015em; line-height:1.15; }
+  .sub { color:var(--muted); margin:0 0 26px; font-size:17px; max-width:700px; }
+  .lead { color:var(--muted); font-size:20px; max-width:720px; }
+  .cta { display:flex; gap:12px; flex-wrap:wrap; margin-top:30px; }
+  .btn { display:inline-block; padding:14px 24px; border-radius:10px; font-weight:650; text-decoration:none; border:1px solid var(--line); color:var(--text); }
   .btn.primary { background:var(--accent); color:#1a1200; border-color:var(--accent); }
-  section { padding-block:44px; border-top:1px solid var(--line); }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+  .trust { margin-top:22px; color:var(--muted); font-size:14px; }
+  section { padding-block:52px; border-top:1px solid var(--line); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:16px; }
   .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px; }
   .card h3 { margin:0 0 8px; font-size:18px; }
   .card p { margin:0; color:var(--muted); }
+  .big { font-size:30px; font-weight:750; color:var(--accent); margin-bottom:4px; }
+  .calc { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; align-items:stretch; }
+  .calc label { display:block; font-size:14px; color:var(--muted); margin-bottom:6px; }
+  .calc input { width:100%; background:#0a0c0f; border:1px solid var(--line); color:var(--text); border-radius:10px; padding:12px 14px; font-size:18px; }
+  .result { background:linear-gradient(135deg,#2a1d05,#15181d); border:1px solid #6b4a0e; border-radius:14px; padding:24px; }
+  .result .money { font-size:clamp(34px,6vw,48px); font-weight:800; color:var(--accent); line-height:1.1; }
+  .result p { margin:8px 0 0; color:#d8c7a4; }
   .flow { counter-reset:step; display:grid; gap:12px; }
-  .flow div { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 18px 14px 56px; position:relative; }
-  .flow div::before { counter-increment:step; content:counter(step); position:absolute; left:18px; top:14px; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#1a1200; font-weight:700; text-align:center; line-height:26px; font-size:14px; }
-  .price { font-size:40px; font-weight:700; margin:6px 0; }
+  .flow div { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px 18px 16px 58px; position:relative; }
+  .flow div::before { counter-increment:step; content:counter(step); position:absolute; left:18px; top:16px; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#1a1200; font-weight:700; text-align:center; line-height:26px; font-size:14px; }
+  .decisions span { display:inline-block; margin:6px 6px 0 0; padding:4px 10px; border-radius:999px; border:1px solid var(--line); font-size:13px; font-family:ui-monospace,monospace; }
+  .price { font-size:44px; font-weight:750; margin:6px 0; }
   .price small { font-size:16px; color:var(--muted); font-weight:400; }
   ul.plain { padding-left:18px; color:var(--muted); margin:10px 0 18px; }
+  .card.best { border-color:var(--accent); }
+  .pill { display:inline-block; font-size:12px; font-weight:700; color:#1a1200; background:var(--accent); border-radius:999px; padding:2px 10px; margin-left:8px; vertical-align:middle; }
   pre { background:#0a0c0f; border:1px solid var(--line); border-radius:10px; padding:16px; overflow-x:auto; font-size:13.5px; line-height:1.5; }
   code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
-  .no { color:var(--muted); }
-  .no b { color:var(--text); }
-  .decisions span { display:inline-block; margin:4px 6px 0 0; padding:4px 10px; border-radius:999px; border:1px solid var(--line); font-size:13px; font-family:ui-monospace,monospace; }
+  details { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 18px; margin-bottom:10px; }
+  summary { cursor:pointer; font-weight:600; }
+  details p { color:var(--muted); margin:10px 0 0; }
   footer { padding-block:40px 60px; color:var(--muted); font-size:14px; border-top:1px solid var(--line); }
   a { color:var(--accent); }
 </style>
@@ -42,77 +57,126 @@
 <main>
 <header>
   <div class="tag">For AI video creators · ComfyUI · Kling · Runway · Veo · Hailuo · Seedance</div>
-  <h1>Stop paying for broken AI&nbsp;video renders.</h1>
-  <p class="lead">SmartTokenGuard checks every keyframe and clip your AI assistant helps you make. It catches the failures you'd otherwise pay to re-render later, then tells the assistant what to do: pass it, retry with specific fixes, switch models, or stop spending on that shot.</p>
+  <h1>Stop burning credits on <em>broken</em> AI video.</h1>
+  <p class="lead">Every black frame, frozen shot and off-model keyframe is money you already paid for. SmartTokenGuard checks each render the moment it lands and tells you whether it's worth paying for the next step, before the credits are gone.</p>
   <div class="cta">
-    <a class="btn primary" href="#pricing">Get a license — from US$9/month</a>
-    <a class="btn" href="https://github.com/nwjnjjj/smart-token-guard">Install guide</a>
+    <a class="btn primary" href="#pricing">Start saving from US$9/month</a>
+    <a class="btn" href="#calculator">See what you're losing</a>
   </div>
+  <div class="trust">Calibrated on 250+ real AI video clips · Works inside Claude, Cursor and VS Code · Your files are deleted right after each check</div>
 </header>
 
-<section>
-  <h2>What it catches</h2>
-  <div class="grid">
-    <div class="card"><h3>Blur &amp; soft focus</h3><p>Edge-sharpness measured the same way for 16:9, 9:16 and 4K, so dark or shallow-focus shots aren't falsely flagged.</p></div>
-    <div class="card"><h3>Flicker &amp; frozen frames</h3><p>Real alternating flicker (not lightning or camera moves), stalled motion, clips that barely animate.</p></div>
-    <div class="card"><h3>Black frames &amp; exposure</h3><p>Black or blown-out renders and over- or under-exposed keyframes, found before you pay for image-to-video.</p></div>
-    <div class="card"><h3>Look drift</h3><p>Colour and lighting compared against your reference image, so shot 40 still matches shot 1.</p></div>
-    <div class="card"><h3>Hands, faces, identity</h3><p>Review frames go to your assistant, which looks at them. A render only passes after that visual review.</p></div>
-    <div class="card"><h3>Impacts, flashes, cuts</h3><p>Exact frames and times, ready for placing sound effects in your editor.</p></div>
+<section id="calculator">
+  <h2>How much are broken renders costing you?</h2>
+  <p class="sub">Plug in your own numbers.</p>
+  <div class="calc">
+    <div class="card">
+      <label for="renders">Renders per month</label>
+      <input id="renders" type="number" min="0" step="10" value="200">
+      <label for="cost" style="margin-top:14px">Average cost per render (US$)</label>
+      <input id="cost" type="number" min="0" step="0.05" value="0.50">
+      <label for="fail" style="margin-top:14px">Share you end up throwing away (%)</label>
+      <input id="fail" type="number" min="0" max="100" step="5" value="25">
+    </div>
+    <div class="result">
+      <div style="color:#d8c7a4;font-size:14px;text-transform:uppercase;letter-spacing:.05em">Spent on renders you throw away</div>
+      <div class="money"><span id="monthly">$25</span><span style="font-size:20px;color:#d8c7a4"> / month</span></div>
+      <p><b id="yearly">$300</b> a year.</p>
+      <p>Catch a bad keyframe and you skip paying for the clip built on top of it. At your price, Starter pays for itself after <b id="breakeven">18</b> skipped renders a month.</p>
+    </div>
   </div>
 </section>
 
 <section>
-  <h2>How it saves money</h2>
+  <h2>Where the money leaks</h2>
+  <p class="sub">The expensive part is rarely the first render. It's everything you build on a broken one.</p>
+  <div class="grid">
+    <div class="card"><div class="big">Bad keyframe</div><p>You pay for image-to-video on a still that was already soft, blown out or off-model. The whole clip is wasted before it starts.</p></div>
+    <div class="card"><div class="big">Blind re-rolls</div><p>Same prompt, new seed, fingers crossed. Without knowing what broke, every retry costs the same and fails the same way.</p></div>
+    <div class="card"><div class="big">Found too late</div><p>Black frames or a frozen second show up in the edit, after you've already paid for sound, upscale and the next shots.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Check first. Pay second.</h2>
+  <p class="sub">A quick check between every render and the next paid step.</p>
   <div class="flow">
-    <div><b>Check the keyframe first.</b> A rejected still costs nothing; a rejected 5-second clip has already been paid for.</div>
-    <div><b>Inspect the clip.</b> Measured checks, plus review frames for your assistant to look at.</div>
-    <div><b>Follow the decision.</b> <span class="decisions"><span>PASS</span><span>RETRY_SAME_MODEL</span><span>SWITCH_TO_FALLBACK</span><span>HALT</span><span>HALT_BUDGET</span></span><br>Retries come with the exact negative-prompt terms, a lower motion setting and a new seed.</div>
-    <div><b>See the spend.</b> Cost per shot, attempts per passed shot, first-try pass rate, video renders avoided.</div>
+    <div><b>Check the keyframe before image-to-video.</b> A rejected still costs you nothing. A rejected clip costs the full render.</div>
+    <div><b>Inspect every clip the moment it renders.</b> Blur, flicker, frozen and black frames, hard cuts and colour drift against your reference, plus review frames so your assistant checks hands and faces.</div>
+    <div><b>Get a verdict, not a guess.</b> <span class="decisions"><span>PASS</span><span>RETRY_SAME_MODEL</span><span>SWITCH_TO_FALLBACK</span><span>HALT</span><span>HALT_BUDGET</span></span><br>Retries come with the exact negative-prompt terms, a lower motion setting and a new seed, so the next attempt is aimed.</div>
+    <div><b>Stop the spiral.</b> Set a budget per project and it halts a shot that keeps failing, then shows what you spent and how many renders you skipped.</div>
+  </div>
+</section>
+
+<section>
+  <h2>Catches what costs you</h2>
+  <div class="grid">
+    <div class="card"><h3>Black frames &amp; freezes</h3><p>Seconds of black mid-shot or a render that stalls. Flagged instantly, before the clip goes anywhere.</p></div>
+    <div class="card"><h3>Flicker &amp; blur</h3><p>Real alternating flicker and soft focus, measured the same way for 16:9, 9:16 and 4K.</p></div>
+    <div class="card"><h3>Off-model looks</h3><p>Colour and lighting compared with your reference, so you catch shot 40 drifting away from shot 1.</p></div>
+    <div class="card"><h3>Hands, faces, identity</h3><p>Review frames go straight to your AI assistant, which checks them before anything passes.</p></div>
+    <div class="card"><h3>Impacts &amp; cuts</h3><p>Exact frames of every hit, flash and cut, ready for placing sound effects.</p></div>
+    <div class="card"><h3>Spend per shot</h3><p>Cost per shot, attempts per keeper and first-try pass rate, so you know which models are worth it.</p></div>
   </div>
 </section>
 
 <section id="pricing">
   <h2>Pricing</h2>
+  <p class="sub">Cancel any time.</p>
   <div class="grid">
     <div class="card">
       <h3>Starter</h3>
       <div class="price">US$9 <small>/ month</small></div>
-      <ul class="plain"><li>300 checks per month</li><li>QA decisions and spend reports included</li><li>MCP server + Python SDK + HTTP API</li><li>Cancel any time</li></ul>
-      <a class="btn primary" data-plan="STARTER_MONTHLY" href="https://buy.polar.sh/polar_cl_zy8g2RdQPvBP0oWTSBSfiRtZXSEPYZ8NZH9CH0FLKCD">Starter monthly</a>
+      <ul class="plain"><li>300 checks every month</li><li>Verdicts, fixes and spend reports</li><li>Claude, Cursor, VS Code, Python SDK and AI agents</li></ul>
+      <a class="btn primary" data-plan="STARTER_MONTHLY" href="https://buy.polar.sh/polar_cl_zy8g2RdQPvBP0oWTSBSfiRtZXSEPYZ8NZH9CH0FLKCD">Get Starter</a>
       <a class="btn" data-plan="STARTER_YEARLY" href="https://buy.polar.sh/polar_cl_QwDbzHarFCdl56PL5VWnnp8NCCmoU6DdxWZUL4ZaL7J">US$99 / year</a>
     </div>
-    <div class="card">
-      <h3>Pro</h3>
+    <div class="card best">
+      <h3>Pro <span class="pill">For daily creators</span></h3>
       <div class="price">US$29 <small>/ month</small></div>
-      <ul class="plain"><li>3,000 checks per month (10x Starter)</li><li>For daily creators and studio artists</li><li>Everything in Starter</li><li>Cancel any time</li></ul>
-      <a class="btn primary" data-plan="PRO_MONTHLY" href="https://buy.polar.sh/polar_cl_YJscMdYaY4aAfOQflHaQuWZTu2UCitbSe6YQZ1oh74G">Pro monthly</a>
+      <ul class="plain"><li>3,000 checks every month, 10x Starter</li><li>Built for studios and batch rendering</li><li>Everything in Starter</li></ul>
+      <a class="btn primary" data-plan="PRO_MONTHLY" href="https://buy.polar.sh/polar_cl_YJscMdYaY4aAfOQflHaQuWZTu2UCitbSe6YQZ1oh74G">Get Pro</a>
       <a class="btn" data-plan="PRO_YEARLY" href="https://buy.polar.sh/polar_cl_7nP2n8Z3AQnxJxwARd0V1qKX7VyYIm6ddXK7I4I1H8S">US$290 / year</a>
     </div>
   </div>
-  <p class="no">Checks reset on the 1st of each month. One license per person; teams buy one per member. Checkout, tax and invoices are handled by Polar, the merchant of record. The license key in your receipt is your API key.</p>
+  <p class="sub" style="margin-top:18px">Secure checkout, tax and invoices by Polar. Your license key arrives in the receipt and works right away.</p>
 </section>
 
 <section>
-  <h2>Install in one minute</h2>
-  <p class="no">Requires <a href="https://docs.astral.sh/uv/">uv</a>. Claude Code:</p>
+  <h2>Up and running in one minute</h2>
+  <p class="sub">Claude Code (requires <a href="https://docs.astral.sh/uv/">uv</a>):</p>
   <pre><code>claude mcp add smart-token-guard -e STG_LICENSE_KEY=your-license-key -- \
   uvx --from git+https://github.com/nwjnjjj/smart-token-guard smart-token-guard</code></pre>
-  <p class="no">Claude Desktop, Cursor, VS Code and Python SDK instructions are in the <a href="https://github.com/nwjnjjj/smart-token-guard">README</a>.</p>
-  <pre><code>from smart_token_guard import Client
-report = Client().inspect("renders/sh010.mp4", reference_image="refs/kai.png")
-print(report["report"]["issues"])</code></pre>
+  <p class="sub">Claude Desktop: one-click <a href="https://github.com/nwjnjjj/smart-token-guard/releases/latest">extension</a>. Cursor, VS Code, Python SDK and AI agents (remote MCP and A2A): see the <a href="https://github.com/nwjnjjj/smart-token-guard">guide</a>.</p>
 </section>
 
 <section>
-  <h2>What it doesn't do</h2>
-  <p class="no"><b>It never generates or re-renders video</b> and never calls a paid AI API for you. <b>It doesn't certify faces or anatomy by itself</b>: your assistant judges those from the review frames. <b>It doesn't keep your files.</b> Uploads are analysed in a temporary file and deleted before the response is sent. Limits: 32 MB, 60 seconds, 1080p per file.</p>
+  <h2>Questions</h2>
+  <details><summary>I generate on Kling, Runway or another web tool. Does it work?</summary><p>Yes. Download the clip and point your assistant at the file, or pass the link to the agent endpoint. It works with any image or video you can export.</p></details>
+  <details><summary>Do you keep my videos?</summary><p>No. Each file is analysed and deleted right after the check. Your project spend ledger stays on your own computer.</p></details>
+  <details><summary>What counts as a check?</summary><p>One image or clip inspected. Verdicts, fixes and spend reports are included for free.</p></details>
+  <details><summary>Can my team use it?</summary><p>Each license is for one person. Teams get one per member, and Pro covers heavy daily use.</p></details>
 </section>
 
 <footer>
   SmartTokenGuard · Billing, refunds and cancellation through the Polar customer portal linked in your receipt.
 </footer>
 </main>
+<script>
+(function () {
+  var r = document.getElementById("renders"), c = document.getElementById("cost"), f = document.getElementById("fail");
+  function money(v) { return "$" + (v >= 100 ? Math.round(v).toLocaleString("en-US") : v.toFixed(2).replace(/\.00$/, "")); }
+  function update() {
+    var renders = Math.max(0, +r.value || 0), cost = Math.max(0, +c.value || 0), fail = Math.min(100, Math.max(0, +f.value || 0)) / 100;
+    var monthly = renders * cost * fail;
+    document.getElementById("monthly").textContent = money(monthly);
+    document.getElementById("yearly").textContent = money(monthly * 12);
+    document.getElementById("breakeven").textContent = cost > 0 ? Math.ceil(9 / cost) : "–";
+  }
+  [r, c, f].forEach(function (el) { el.addEventListener("input", update); });
+  update();
+})();
+</script>
 <script>
 (function () {
   var API = "https://stg-api-560636228350.asia-east1.run.app/v1/e";
