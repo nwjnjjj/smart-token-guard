@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SmartTokenGuard — stop paying for broken AI video renders</title>
+<meta name="description" content="QA gate for AI video: catches blur, flicker, frozen frames, black frames and look drift before you pay for the next render. MCP server for Claude, Cursor and VS Code, plus a Python SDK.">
+<style>
+  :root { --bg:#0d0f12; --panel:#15181d; --line:#262b33; --text:#e9ecf1; --muted:#9aa3ae; --accent:#ffb020; --ok:#3ecf8e; --bad:#ff5d5d; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; padding-inline:20px; }
+  main { max-width:960px; margin:0 auto; }
+  header { padding-block:72px 40px; }
+  .tag { color:var(--accent); font-weight:600; letter-spacing:.04em; font-size:14px; text-transform:uppercase; }
+  h1 { font-size:clamp(34px,6vw,56px); line-height:1.08; margin:14px 0 18px; letter-spacing:-.02em; }
+  h2 { font-size:28px; margin:0 0 18px; letter-spacing:-.01em; }
+  .lead { color:var(--muted); font-size:19px; max-width:680px; }
+  .cta { display:flex; gap:12px; flex-wrap:wrap; margin-top:28px; }
+  .btn { display:inline-block; padding:13px 22px; border-radius:10px; font-weight:600; text-decoration:none; border:1px solid var(--line); color:var(--text); }
+  .btn.primary { background:var(--accent); color:#1a1200; border-color:var(--accent); }
+  section { padding-block:44px; border-top:1px solid var(--line); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px; }
+  .card h3 { margin:0 0 8px; font-size:18px; }
+  .card p { margin:0; color:var(--muted); }
+  .flow { counter-reset:step; display:grid; gap:12px; }
+  .flow div { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 18px 14px 56px; position:relative; }
+  .flow div::before { counter-increment:step; content:counter(step); position:absolute; left:18px; top:14px; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#1a1200; font-weight:700; text-align:center; line-height:26px; font-size:14px; }
+  .price { font-size:40px; font-weight:700; margin:6px 0; }
+  .price small { font-size:16px; color:var(--muted); font-weight:400; }
+  ul.plain { padding-left:18px; color:var(--muted); margin:10px 0 18px; }
+  pre { background:#0a0c0f; border:1px solid var(--line); border-radius:10px; padding:16px; overflow-x:auto; font-size:13.5px; line-height:1.5; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .no { color:var(--muted); }
+  .no b { color:var(--text); }
+  .decisions span { display:inline-block; margin:4px 6px 0 0; padding:4px 10px; border-radius:999px; border:1px solid var(--line); font-size:13px; font-family:ui-monospace,monospace; }
+  footer { padding-block:40px 60px; color:var(--muted); font-size:14px; border-top:1px solid var(--line); }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="tag">For AI video creators · ComfyUI · Kling · Runway · Veo · Hailuo · Seedance</div>
+  <h1>Stop paying for broken AI&nbsp;video renders.</h1>
+  <p class="lead">SmartTokenGuard checks every keyframe and clip your AI assistant helps you make. It catches the failures you'd otherwise pay to re-render later, then tells the assistant what to do: pass it, retry with specific fixes, switch models, or stop spending on that shot.</p>
+  <div class="cta">
+    <a class="btn primary" href="#pricing">Get a license — US$9/month</a>
+    <a class="btn" href="https://github.com/nwjnjjj/smart-token-guard">Install guide</a>
+  </div>
+</header>
+
+<section>
+  <h2>What it catches</h2>
+  <div class="grid">
+    <div class="card"><h3>Blur &amp; soft focus</h3><p>Edge-sharpness measured the same way for 16:9, 9:16 and 4K, so dark or shallow-focus shots aren't falsely flagged.</p></div>
+    <div class="card"><h3>Flicker &amp; frozen frames</h3><p>Real alternating flicker (not lightning or camera moves), stalled motion, clips that barely animate.</p></div>
+    <div class="card"><h3>Black frames &amp; exposure</h3><p>Black or blown-out renders and over- or under-exposed keyframes, found before you pay for image-to-video.</p></div>
+    <div class="card"><h3>Look drift</h3><p>Colour and lighting compared against your reference image, so shot 40 still matches shot 1.</p></div>
+    <div class="card"><h3>Hands, faces, identity</h3><p>Review frames go to your assistant, which looks at them. A render only passes after that visual review.</p></div>
+    <div class="card"><h3>Impacts, flashes, cuts</h3><p>Exact frames and times, ready for placing sound effects in your editor.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>How it saves money</h2>
+  <div class="flow">
+    <div><b>Check the keyframe first.</b> A rejected still costs nothing; a rejected 5-second clip has already been paid for.</div>
+    <div><b>Inspect the clip.</b> Measured checks, plus review frames for your assistant to look at.</div>
+    <div><b>Follow the decision.</b> <span class="decisions"><span>PASS</span><span>RETRY_SAME_MODEL</span><span>SWITCH_TO_FALLBACK</span><span>HALT</span><span>HALT_BUDGET</span></span><br>Retries come with the exact negative-prompt terms, a lower motion setting and a new seed.</div>
+    <div><b>See the spend.</b> Cost per shot, attempts per passed shot, first-try pass rate, video renders avoided.</div>
+  </div>
+</section>
+
+<section id="pricing">
+  <h2>Pricing</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Personal · Monthly</h3>
+      <div class="price">US$9 <small>/ month</small></div>
+      <ul class="plain"><li>3,000 checks per month (resets monthly)</li><li>QA decisions and spend reports included</li><li>MCP server + Python SDK + HTTP API</li><li>Cancel any time</li></ul>
+      <a class="btn primary" href="https://buy.polar.sh/polar_cl_zy8g2RdQPvBP0oWTSBSfiRtZXSEPYZ8NZH9CH0FLKCD">Subscribe monthly</a>
+    </div>
+    <div class="card">
+      <h3>Personal · Yearly</h3>
+      <div class="price">US$99 <small>/ year</small></div>
+      <ul class="plain"><li>Everything in monthly</li><li>About 2 months free</li><li>One license per person; teams buy one per member</li></ul>
+      <a class="btn primary" href="https://buy.polar.sh/polar_cl_QwDbzHarFCdl56PL5VWnnp8NCCmoU6DdxWZUL4ZaL7J">Subscribe yearly</a>
+    </div>
+  </div>
+  <p class="no">Checkout, tax and invoices are handled by Polar, the merchant of record. The license key in your receipt is your API key.</p>
+</section>
+
+<section>
+  <h2>Install in one minute</h2>
+  <p class="no">Requires <a href="https://docs.astral.sh/uv/">uv</a>. Claude Code:</p>
+  <pre><code>claude mcp add smart-token-guard -e STG_LICENSE_KEY=your-license-key -- \
+  uvx --from git+https://github.com/nwjnjjj/smart-token-guard smart-token-guard</code></pre>
+  <p class="no">Claude Desktop, Cursor, VS Code and Python SDK instructions are in the <a href="https://github.com/nwjnjjj/smart-token-guard">README</a>.</p>
+  <pre><code>from smart_token_guard import Client
+report = Client().inspect("renders/sh010.mp4", reference_image="refs/kai.png")
+print(report["report"]["issues"])</code></pre>
+</section>
+
+<section>
+  <h2>What it doesn't do</h2>
+  <p class="no"><b>It never generates or re-renders video</b> and never calls a paid AI API for you. <b>It doesn't certify faces or anatomy by itself</b>: your assistant judges those from the review frames. <b>It doesn't keep your files.</b> Uploads are analysed in a temporary file and deleted before the response is sent. Limits: 32 MB, 60 seconds, 1080p per file.</p>
+</section>
+
+<footer>
+  SmartTokenGuard · Billing, refunds and cancellation through the Polar customer portal linked in your receipt.
+</footer>
+</main>
+</body>
+</html>

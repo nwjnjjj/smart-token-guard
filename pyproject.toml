@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "smart-token-guard"
+dynamic = ["version"]
+description = "Stop paying for broken AI video renders: QA gate for ComfyUI, Kling, Runway, Veo and other AI video (MCP server + Python SDK)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+keywords = ["mcp", "ai-video", "comfyui", "quality-assurance", "kling", "runway", "veo"]
+classifiers = ["Programming Language :: Python :: 3", "Topic :: Multimedia :: Video"]
+dependencies = ["mcp>=2.2,<3", "httpx>=0.27"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://github.com/nwjnjjj/smart-token-guard"
+
+[project.scripts]
+smart-token-guard = "smart_token_guard.mcp_server:main"
+
+[tool.hatch.version]
+path = "src/smart_token_guard/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/smart_token_guard"]
