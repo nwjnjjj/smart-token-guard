@@ -2,6 +2,8 @@
 
 <!-- mcp-name: io.github.nwjnjjj/smart-token-guard -->
 
+**English** · [简体中文](README.zh-CN.md)
+
 **Stop burning credits on broken AI video.**
 
 Every black frame, frozen shot and off-model keyframe is money you already paid for. SmartTokenGuard checks each

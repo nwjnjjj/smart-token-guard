@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SmartTokenGuard — 别再为废片烧钱</title>
+<meta name="description" content="在为下一步付费之前，先揪出生成失败的 AI 视频。SmartTokenGuard 检查每张关键帧和每段视频，告诉你该通过、带着具体修正重试、换模型，还是停止花钱。支持 ComfyUI、可灵、即梦、海螺、Runway、Veo 和 AI Agent。">
+<meta property="og:title" content="别再为 AI 视频废片烧钱">
+<meta property="og:description" content="下一次生成付费之前，先检查每张关键帧和每段视频。">
+<style>
+  :root { --bg:#0d0f12; --panel:#15181d; --line:#262b33; --text:#e9ecf1; --muted:#9aa3ae; --accent:#ffb020; --ok:#3ecf8e; --bad:#ff5d5d; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.7 ui-sans-serif,system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif; padding-inline:20px; }
+  main { max-width:980px; margin:0 auto; }
+  header { padding-block:76px 44px; }
+  .tag { color:var(--accent); font-weight:600; letter-spacing:.05em; font-size:14px; text-transform:uppercase; }
+  h1 { font-size:clamp(36px,6.4vw,62px); line-height:1.05; margin:14px 0 20px; letter-spacing:-.025em; }
+  h1 em { font-style:normal; color:var(--accent); }
+  h2 { font-size:clamp(26px,4vw,34px); margin:0 0 10px; letter-spacing:-.015em; line-height:1.15; }
+  .sub { color:var(--muted); margin:0 0 26px; font-size:17px; max-width:700px; }
+  .lead { color:var(--muted); font-size:20px; max-width:720px; }
+  .cta { display:flex; gap:12px; flex-wrap:wrap; margin-top:30px; }
+  .btn { display:inline-block; padding:14px 24px; border-radius:10px; font-weight:650; text-decoration:none; border:1px solid var(--line); color:var(--text); }
+  .btn.primary { background:var(--accent); color:#1a1200; border-color:var(--accent); }
+  .trust { margin-top:22px; color:var(--muted); font-size:14px; }
+  section { padding-block:52px; border-top:1px solid var(--line); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:16px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px; }
+  .card h3 { margin:0 0 8px; font-size:18px; }
+  .card p { margin:0; color:var(--muted); }
+  .big { font-size:30px; font-weight:750; color:var(--accent); margin-bottom:4px; }
+  .calc { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; align-items:stretch; }
+  .calc label { display:block; font-size:14px; color:var(--muted); margin-bottom:6px; }
+  .calc input { width:100%; background:#0a0c0f; border:1px solid var(--line); color:var(--text); border-radius:10px; padding:12px 14px; font-size:18px; }
+  .result { background:linear-gradient(135deg,#2a1d05,#15181d); border:1px solid #6b4a0e; border-radius:14px; padding:24px; }
+  .result .money { font-size:clamp(34px,6vw,48px); font-weight:800; color:var(--accent); line-height:1.1; }
+  .result p { margin:8px 0 0; color:#d8c7a4; }
+  .flow { counter-reset:step; display:grid; gap:12px; }
+  .flow div { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px 18px 16px 58px; position:relative; }
+  .flow div::before { counter-increment:step; content:counter(step); position:absolute; left:18px; top:16px; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#1a1200; font-weight:700; text-align:center; line-height:26px; font-size:14px; }
+  .decisions span { display:inline-block; margin:6px 6px 0 0; padding:4px 10px; border-radius:999px; border:1px solid var(--line); font-size:13px; font-family:ui-monospace,monospace; }
+  .price { font-size:44px; font-weight:750; margin:6px 0; }
+  .price small { font-size:16px; color:var(--muted); font-weight:400; }
+  ul.plain { padding-left:18px; color:var(--muted); margin:10px 0 18px; }
+  .card.best { border-color:var(--accent); }
+  .pill { display:inline-block; font-size:12px; font-weight:700; color:#1a1200; background:var(--accent); border-radius:999px; padding:2px 10px; margin-left:8px; vertical-align:middle; }
+  pre { background:#0a0c0f; border:1px solid var(--line); border-radius:10px; padding:16px; overflow-x:auto; font-size:13.5px; line-height:1.5; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  details { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 18px; margin-bottom:10px; }
+  summary { cursor:pointer; font-weight:600; }
+  details p { color:var(--muted); margin:10px 0 0; }
+  footer { padding-block:40px 60px; color:var(--muted); font-size:14px; border-top:1px solid var(--line); }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="tag">给 AI 视频创作者 · ComfyUI · 可灵 · 即梦 · 海螺 · Runway · Veo</div>
+  <h1>别再为 AI 视频<em>废片</em>烧钱。</h1>
+  <p class="lead">每一段黑屏、卡帧、角色跑脸的片段，都是你已经花出去的钱。SmartTokenGuard 在每次生成完成的那一刻立即检查，在你为下一步付费之前告诉你：值不值得继续花。</p>
+  <div class="cta">
+    <a class="btn primary" href="#pricing">每月 US$9 起，开始省钱</a>
+    <a class="btn" href="#proof">看看它能抓出什么</a>
+  </div>
+  <div class="trust">基于 250+ 段真实 AI 视频校准 · 可在 Claude、Cursor、VS Code 中直接使用 · 文件检查完立即删除</div>
+</header>
+
+<section id="calculator">
+  <h2>废片每个月让你损失多少钱？</h2>
+  <p class="sub">填入你自己的数字算一算。</p>
+  <div class="calc">
+    <div class="card">
+      <label for="renders">每月生成次数</label>
+      <input id="renders" type="number" min="0" step="10" value="200">
+      <label for="cost" style="margin-top:14px">每次生成平均费用（美元）</label>
+      <input id="cost" type="number" min="0" step="0.05" value="0.50">
+      <label for="fail" style="margin-top:14px">最后不能用的比例（%）</label>
+      <input id="fail" type="number" min="0" max="100" step="5" value="25">
+    </div>
+    <div class="result">
+      <div style="color:#d8c7a4;font-size:14px;text-transform:uppercase;letter-spacing:.05em">花在废片上的钱</div>
+      <div class="money"><span id="monthly">$25</span><span style="font-size:20px;color:#d8c7a4"> / 月</span></div>
+      <p>一年就是 <b id="yearly">$300</b>。</p>
+      <p>提前抓出一张坏关键帧，就省下基于它生成视频的费用。按你的单价，每月只要少浪费 <b id="breakeven">18</b> 次生成，Starter 就回本了。</p>
+    </div>
+  </div>
+</section>
+
+<section id="proof">
+  <h2>看看一次检查能抓出什么</h2>
+  <p class="sub">公开 AI 视频基准片段上的真实检测结果，以及在 AI 助手里给出结论的样子。</p>
+  <video src="../img/demo_zh.mp4" poster="../img/real-results.png" controls muted playsinline preload="metadata" style="width:100%;border-radius:14px;display:block;margin:0 0 18px;border:1px solid #262a31"></video>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+    <figure class="card" style="margin:0;padding:10px"><img src="../img/real-results.png" alt="在 CogVideoX 基准片段中检测到黑屏和卡帧" style="width:100%;border-radius:10px;display:block"><figcaption class="sub" style="margin:10px 6px 4px;font-size:14px">自动标出：片段中间 2.5 秒黑屏，以及 1.25 秒卡帧。</figcaption></figure>
+    <figure class="card" style="margin:0;padding:10px"><img src="../img/example-session.png" alt="示例：关键帧检查返回 RETRY 并附上具体修正" style="width:100%;border-radius:10px;display:block"><figcaption class="sub" style="margin:10px 6px 4px;font-size:14px">示例对话：关键帧没通过，修好之前不花一分钱生成视频。</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <h2>钱都漏到哪里去了</h2>
+  <p class="sub">最贵的往往不是第一次生成，而是在坏素材上继续叠加的每一步。</p>
+  <div class="grid">
+    <div class="card"><div class="big">坏关键帧</div><p>拿一张本来就模糊、过曝或角色跑脸的图去做图生视频，整段视频还没开始就注定作废。</p></div>
+    <div class="card"><div class="big">盲目重抽</div><p>同样的提示词、换个种子、碰碰运气。不知道哪里坏了，每次重试花一样的钱，也坏在一样的地方。</p></div>
+    <div class="card"><div class="big">发现太晚</div><p>剪辑时才看到黑屏或卡住一秒，这时配音、超分和后面的镜头钱都已经花了。</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>先检查，再付钱。</h2>
+  <p class="sub">每次生成和下一个付费步骤之间，加一道快速检查。</p>
+  <div class="flow">
+    <div><b>图生视频之前先检查关键帧。</b>淘汰一张图不花钱，淘汰一段视频要付全额生成费。</div>
+    <div><b>每段视频一生成完立即检查。</b>模糊、闪烁、卡帧、黑屏、硬切，以及与参考图的色调偏移，并返回审阅帧让 AI 助手检查手和脸。</div>
+    <div><b>给出明确结论，而不是猜。</b> <span class="decisions"><span>PASS</span><span>RETRY_SAME_MODEL</span><span>SWITCH_TO_FALLBACK</span><span>HALT</span><span>HALT_BUDGET</span></span><br>重试时附上具体的负面提示词、更低的运动幅度和新种子，下一次有的放矢。</div>
+    <div><b>及时止损。</b>为每个项目设定预算，一直失败的镜头自动叫停，并显示花了多少、省下多少次生成。</div>
+  </div>
+</section>
+
+<section>
+  <h2>专抓让你赔钱的问题</h2>
+  <div class="grid">
+    <div class="card"><h3>黑屏与卡帧</h3><p>片段中间几秒黑屏或画面卡住，立即标出，不让它流入下一步。</p></div>
+    <div class="card"><h3>闪烁与模糊</h3><p>真实的交替闪烁和虚焦，16:9、9:16 和 4K 用同一标准测量。</p></div>
+    <div class="card"><h3>画风跑偏</h3><p>色彩和光线与参考图对比，第 40 个镜头和第 1 个不一样时马上发现。</p></div>
+    <div class="card"><h3>手、脸、角色一致性</h3><p>审阅帧直接交给 AI 助手检查，看过之后才会通过。</p></div>
+    <div class="card"><h3>撞击与转场</h3><p>精确到帧标出每次撞击、闪光和剪切点，方便对齐音效。</p></div>
+    <div class="card"><h3>每个镜头的花费</h3><p>单镜头成本、每个可用镜头的尝试次数和一次通过率，一眼看出哪个模型最划算。</p></div>
+  </div>
+</section>
+
+<section id="pricing">
+  <h2>价格</h2>
+  <p class="sub">随时可取消。</p>
+  <div class="grid">
+    <div class="card">
+      <h3>Starter</h3>
+      <div class="price">US$9 <small>/ 月</small></div>
+      <ul class="plain"><li>每月 300 次检查</li><li>结论、修正建议和花费报告</li><li>支持 Claude、Cursor、VS Code、Python SDK 和 AI Agent</li></ul>
+      <a class="btn primary" data-plan="STARTER_MONTHLY" href="https://buy.polar.sh/polar_cl_zy8g2RdQPvBP0oWTSBSfiRtZXSEPYZ8NZH9CH0FLKCD">购买 Starter</a>
+      <a class="btn" data-plan="STARTER_YEARLY" href="https://buy.polar.sh/polar_cl_QwDbzHarFCdl56PL5VWnnp8NCCmoU6DdxWZUL4ZaL7J">US$99 / 年</a>
+    </div>
+    <div class="card best">
+      <h3>Pro <span class="pill">高频创作者首选</span></h3>
+      <div class="price">US$29 <small>/ 月</small></div>
+      <ul class="plain"><li>每月 3,000 次检查，是 Starter 的 10 倍</li><li>适合工作室和批量生成</li><li>包含 Starter 全部功能</li></ul>
+      <a class="btn primary" data-plan="PRO_MONTHLY" href="https://buy.polar.sh/polar_cl_YJscMdYaY4aAfOQflHaQuWZTu2UCitbSe6YQZ1oh74G">购买 Pro</a>
+      <a class="btn" data-plan="PRO_YEARLY" href="https://buy.polar.sh/polar_cl_7nP2n8Z3AQnxJxwARd0V1qKX7VyYIm6ddXK7I4I1H8S">US$290 / 年</a>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:18px">由 Polar 提供安全结账、税务和发票，支持 Visa、Mastercard 等银行卡。许可证密钥随收据发送，立即可用。</p>
+</section>
+
+<section id="start">
+  <h2>3 步开始省钱</h2>
+  <div class="flow">
+    <div><b>获取密钥。</b>选择上面的方案，许可证密钥会立即出现在收据里。</div>
+    <div><b>一键安装。</b> <a class="btn primary" style="padding:8px 14px;margin:6px 0 2px" href="https://github.com/nwjnjjj/smart-token-guard/releases/latest/download/smart-token-guard-1.2.2.mcpb">下载 Claude Desktop 安装包</a><br>双击文件并粘贴密钥。使用 Cursor、VS Code、Claude Code、Python 或 AI Agent？ <a href="https://github.com/nwjnjjj/smart-token-guard#install-mcp">一分钟完成设置</a>.</div>
+    <div><b>直接问 AI 助手。</b>"在我付费生成下一段之前，先检查 renders/shot10.mp4。"马上得到结论和具体修正。</div>
+  </div>
+  <details style="margin-top:14px"><summary>Claude Code 命令</summary><pre><code>claude mcp add smart-token-guard -e STG_LICENSE_KEY=your-license-key -- \
+  uvx --from git+https://github.com/nwjnjjj/smart-token-guard smart-token-guard</code></pre></details>
+</section>
+
+<section>
+  <h2>常见问题</h2>
+  <details><summary>我用可灵、即梦、Runway 等网页工具生成，能用吗？</summary><p>可以。下载片段后让 AI 助手指向该文件，或把链接交给 Agent 端点。任何能导出的图片或视频都能检查。</p></details>
+  <details><summary>会保存我的视频吗？</summary><p>不会。每个文件分析完立即删除，项目花费记录只保存在你自己的电脑上。</p></details>
+  <details><summary>怎样算一次检查？</summary><p>检查一张图片或一段视频算一次。结论、修正建议和花费报告都免费包含。</p></details>
+  <details><summary>团队可以一起用吗？</summary><p>每个许可证限一人使用。团队每位成员各买一份，高频使用选 Pro。</p></details>
+</section>
+
+<footer>
+  SmartTokenGuard · 账单、退款与取消请通过收据中的 Polar 客户门户办理。 · <a href="../">English</a>
+</footer>
+</main>
+<script>
+(function () {
+  var r = document.getElementById("renders"), c = document.getElementById("cost"), f = document.getElementById("fail");
+  function money(v) { return "$" + (v >= 100 ? Math.round(v).toLocaleString("en-US") : v.toFixed(2).replace(/\.00$/, "")); }
+  function update() {
+    var renders = Math.max(0, +r.value || 0), cost = Math.max(0, +c.value || 0), fail = Math.min(100, Math.max(0, +f.value || 0)) / 100;
+    var monthly = renders * cost * fail;
+    document.getElementById("monthly").textContent = money(monthly);
+    document.getElementById("yearly").textContent = money(monthly * 12);
+    document.getElementById("breakeven").textContent = cost > 0 ? Math.ceil(9 / cost) : "–";
+  }
+  [r, c, f].forEach(function (el) { el.addEventListener("input", update); });
+  update();
+})();
+</script>
+<script>
+(function () {
+  var API = "https://stg-api-560636228350.asia-east1.run.app/v1/e";
+  var q = new URLSearchParams(location.search), ref = q.get("ref");
+  if (!ref) { try { ref = document.referrer ? new URL(document.referrer).hostname : "direct"; } catch (e) { ref = "unknown"; } }
+  var lang = (navigator.language || "").slice(0, 12);
+  function send(t, plan) {
+    var u = API + "?t=" + t + "&ref=" + encodeURIComponent(ref) + "&lang=" + encodeURIComponent(lang) + (plan ? "&plan=" + plan : "");
+    try { if (!(navigator.sendBeacon && navigator.sendBeacon(u))) fetch(u, { method: "POST", mode: "no-cors", keepalive: true }); } catch (e) {}
+  }
+  send("view");
+  document.querySelectorAll("a[data-plan]").forEach(function (a) { a.addEventListener("click", function () { send("checkout_click", a.dataset.plan); }); });
+  document.querySelectorAll('a[href*="github.com/nwjnjjj"]').forEach(function (a) { a.addEventListener("click", function () { send("install_click"); }); });
+})();
+</script>
+</body>
+</html>
