@@ -61,7 +61,7 @@
   <p class="lead">Every black frame, frozen shot and off-model keyframe is money you already paid for. SmartTokenGuard checks each render the moment it lands and tells you whether it's worth paying for the next step, before the credits are gone.</p>
   <div class="cta">
     <a class="btn primary" href="#pricing">Start saving from US$9/month</a>
-    <a class="btn" href="#calculator">See what you're losing</a>
+    <a class="btn" href="#proof">See what it catches</a>
   </div>
   <div class="trust">Calibrated on 250+ real AI video clips · Works inside Claude, Cursor and VS Code · Your files are deleted right after each check</div>
 </header>
@@ -84,6 +84,15 @@
       <p><b id="yearly">$300</b> a year.</p>
       <p>Catch a bad keyframe and you skip paying for the clip built on top of it. At your price, Starter pays for itself after <b id="breakeven">18</b> skipped renders a month.</p>
     </div>
+  </div>
+</section>
+
+<section id="proof">
+  <h2>See what a check catches</h2>
+  <p class="sub">Real results on public AI video benchmark clips, and how a verdict looks inside your assistant.</p>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+    <figure class="card" style="margin:0;padding:10px"><img src="img/real-results.png" alt="Black frames and a stalled render flagged on CogVideoX benchmark clips" style="width:100%;border-radius:10px;display:block"><figcaption class="sub" style="margin:10px 6px 4px;font-size:14px">Flagged automatically: 2.5 s of black frames mid-shot and a 1.25 s stall.</figcaption></figure>
+    <figure class="card" style="margin:0;padding:10px"><img src="img/example-session.png" alt="Example session: a keyframe check returns RETRY with exact fixes" style="width:100%;border-radius:10px;display:block"><figcaption class="sub" style="margin:10px 6px 4px;font-size:14px">Example session: the keyframe fails, so no money is spent on the video until it's fixed.</figcaption></figure>
   </div>
 </section>
 
@@ -142,12 +151,15 @@
   <p class="sub" style="margin-top:18px">Secure checkout, tax and invoices by Polar. Your license key arrives in the receipt and works right away.</p>
 </section>
 
-<section>
-  <h2>Up and running in one minute</h2>
-  <p class="sub">Claude Code (requires <a href="https://docs.astral.sh/uv/">uv</a>):</p>
-  <pre><code>claude mcp add smart-token-guard -e STG_LICENSE_KEY=your-license-key -- \
-  uvx --from git+https://github.com/nwjnjjj/smart-token-guard smart-token-guard</code></pre>
-  <p class="sub">Claude Desktop: one-click <a href="https://github.com/nwjnjjj/smart-token-guard/releases/latest">extension</a>. Cursor, VS Code, Python SDK and AI agents (remote MCP and A2A): see the <a href="https://github.com/nwjnjjj/smart-token-guard">guide</a>.</p>
+<section id="start">
+  <h2>Start saving in 3 steps</h2>
+  <div class="flow">
+    <div><b>Get your key.</b> Pick a plan above. The license key arrives in your receipt instantly.</div>
+    <div><b>Install in one click.</b> <a class="btn primary" style="padding:8px 14px;margin:6px 0 2px" href="https://github.com/nwjnjjj/smart-token-guard/releases/latest/download/smart-token-guard-1.2.2.mcpb">Download for Claude Desktop</a><br>Double-click the file and paste your key. Using Cursor, VS Code, Claude Code, Python or an AI agent? <a href="https://github.com/nwjnjjj/smart-token-guard#install-mcp">Setup takes a minute</a>.</div>
+    <div><b>Ask your assistant.</b> "Check renders/shot10.mp4 before I pay for the next one." You get a verdict and the exact fixes.</div>
+  </div>
+  <details style="margin-top:14px"><summary>Claude Code command</summary><pre><code>claude mcp add smart-token-guard -e STG_LICENSE_KEY=your-license-key -- \
+  uvx --from git+https://github.com/nwjnjjj/smart-token-guard smart-token-guard</code></pre></details>
 </section>
 
 <section>
